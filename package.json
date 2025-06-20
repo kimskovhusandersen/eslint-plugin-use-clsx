@@ -1,0 +1,26 @@
+{
+  "name": "eslint-plugin-use-clsx",
+  "version": "1.0.0",
+  "description": "ESLint rule to enforce using clsx in className attributes",
+  "main": "index.js",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "clsx",
+    "react",
+    "js",
+    "typescript"
+  ],
+  "author": "Kim Skovhus Andersen",
+  "license": "MIT",
+  "peerDependencies": {
+    "eslint": "^8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kimskovhusandersen/eslint-plugin-use-clsx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kimskovhusandersen/eslint-plugin-use-clsx/issues"
+  }
+}
