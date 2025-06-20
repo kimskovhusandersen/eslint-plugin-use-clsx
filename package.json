@@ -4,7 +4,7 @@
   "description": "ESLint rule to enforce using clsx in className attributes",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [
     "eslint",
@@ -35,19 +35,7 @@
     "babel-jest": "^30.0.2",
     "eslint": "^9.29.0",
     "eslint-plugin-local-rules": "^3.0.2",
-    "eslint-rule-tester": "^2.0.0",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^30.0.2"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "transform": {
-      "^.+\\\\.js$": "babel-jest"
-    },
-    "testMatch": [
-      "**/tests/**/*.js"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!(eslint-rule-tester|glob))"
-    ]
   }
 }

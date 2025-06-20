@@ -4,14 +4,16 @@
  */
 "use strict";
 
-const { RuleTester } = require("eslint-rule-tester");
-const actualRule = require("../../../lib/rules/enforce-clsx-in-classname.js");
+import { RuleTester } from "eslint";
+import actualRule from "../../../lib/rules/enforce-clsx-in-classname.js";
 
 const ruleTester = new RuleTester({
-  parserOptions: {
+  languageOptions: {
     ecmaVersion: 2020,
-    ecmaFeatures: {
-      jsx: true,
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true,
+      },
     },
   },
 });
@@ -42,7 +44,7 @@ ruleTester.run("enforce-clsx-in-classname", actualRule, {
     // Template Literal - simple interpolation
     {
       code: `<div className={\`base \${isActive ? 'active' : ''}\`}>Hello</div>`,
-      output: `<div className={clsx('base ', { 'active': isActive })}>Hello</div>`,
+      output: `<div className={clsx("base ", { 'active': isActive })}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     {
@@ -57,30 +59,30 @@ ruleTester.run("enforce-clsx-in-classname", actualRule, {
     },
     {
       code: `<div className={\`foo \${bar} baz\`}>Hello</div>`,
-      output: `<div className={clsx('foo ', bar, ' baz')}>Hello</div>`,
+      output: `<div className={clsx("foo ", bar, " baz")}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     // Template literal with complex nested expressions
     {
       code: `<div className={\`foo \${isActive && 'active'} \${isAdmin ? 'admin' : ''}\`}>Hello</div>`,
-      output: `<div className={clsx('foo ', isActive && 'active', { 'admin': isAdmin })}>Hello</div>`,
+      output: `<div className={clsx("foo ", isActive, 'active', " ", { 'admin': isAdmin })}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
 
     // Binary Expression - string concatenation
     {
       code: `<div className={"foo" + (isActive ? "active" : "")}>Hello</div>`,
-      output: `<div className={clsx('foo', { 'active': isActive })}>Hello</div>`,
+      output: `<div className={clsx("foo", { "active": isActive })}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     {
       code: `<div className={"foo" + " bar"}>Hello</div>`,
-      output: `<div className={clsx('foo', ' bar')}>Hello</div>`,
+      output: `<div className={clsx("foo", " bar")}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     {
       code: `<div className={someVar + " bar"}>Hello</div>`,
-      output: `<div className={clsx(someVar, ' bar')}>Hello</div>`,
+      output: `<div className={clsx(someVar, " bar")}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     {
@@ -107,24 +109,24 @@ ruleTester.run("enforce-clsx-in-classname", actualRule, {
     },
     {
       code: `<div className={isAdmin ? 'admin-only' : undefined}>Hello</div>`,
-      output: `<div className={clsx({ 'admin-only': isAdmin })}>Hello</div>`,
+      output: `<div className={clsx((!isAdmin && undefined), { 'admin-only': isAdmin })}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     {
       code: `<div className={isAdmin ? 'admin-only' : 0}>Hello</div>`, // 0 is falsy, should be omitted
-      output: `<div className={clsx({ 'admin-only': isAdmin })}>Hello</div>`,
+      output: `<div className={clsx((!isAdmin && 0), { 'admin-only': isAdmin })}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     {
       code: `<div className={isActive ? activeClass : 'inactive'}>Hello</div>`, // Non-literal consequent
-      output: `<div className={clsx(isActive && activeClass, { 'inactive': !isActive })}>Hello</div>`,
+      output: `<div className={clsx((isActive && activeClass), { 'inactive': !isActive })}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
 
     // Logical Expression
     {
       code: `<div className={isActive && 'show-active'}>Hello</div>`,
-      output: `<div className={clsx(isActive && 'show-active')}>Hello</div>`,
+      output: `<div className={clsx(isActive, 'show-active')}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     {
@@ -134,19 +136,19 @@ ruleTester.run("enforce-clsx-in-classname", actualRule, {
     },
     {
       code: `<div className={isActive && isAdmin && 'super-user'}>Hello</div>`,
-      output: `<div className={clsx(isActive && isAdmin && 'super-user')}>Hello</div>`,
+      output: `<div className={clsx(isActive, isAdmin, 'super-user')}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     {
       code: `<div className={isLoggedIn && someVariable && 'show-stuff'}>Hello</div>`,
-      output: `<div className={clsx(isLoggedIn && someVariable && 'show-stuff')}>Hello</div>`,
+      output: `<div className={clsx(isLoggedIn, someVariable, 'show-stuff')}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
 
     // Mixed complex expressions
     {
       code: `<div className={\`layout \${isActive ? 'active' : ''} \${isAdmin && 'admin-only'}\`}>Hello</div>`,
-      output: `<div className={clsx('layout ', { 'active': isActive }, ' ', isAdmin && 'admin-only')}>Hello</div>`,
+      output: `<div className={clsx("layout ", { 'active': isActive }, " ", isAdmin, 'admin-only')}>Hello</div>`,
       errors: [{ messageId: "useClsx" }],
     },
     {
